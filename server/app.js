@@ -25,7 +25,7 @@ const server = app.listen(3000);
 setInterval(() => {
     debug('Save DB');
 
-    fs.writeFileSync('./server/db.json', JSON.stringify(R.db, null, 2), 'utf8');
+    fs.writeFileSync('./db.json', JSON.stringify(R.db, null, 2), 'utf8');
 }, config.DB.saveInterval);
 
 module.exports = server;
