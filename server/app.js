@@ -20,7 +20,7 @@ app.use(auth.mount);
 app.use(R.router.routes());
 app.use(R.router.allowedMethods());
 
-const server = app.listen(3000);
+const server = app.listen(3000, '0.0.0.0');
 
 setInterval(() => {
     debug('Save DB');
