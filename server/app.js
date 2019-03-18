@@ -5,7 +5,7 @@ const Koa = require('koa');
 const logger = require('koa-logger');
 const debug = require('debug')('nknag:app');
 
-const config = require('./config.json');
+const config = require('../config.json');
 
 const auth = require('./auth');
 const R = require('./router');

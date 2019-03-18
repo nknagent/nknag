@@ -3,7 +3,7 @@ const IPv4 = require('ip-address').Address4;
 const Router = require('koa-router');
 const debug = require('debug')('nknag:router');
 
-const db = require('./db.json');
+const db = require('../db.json');
 
 const router = new Router();
 

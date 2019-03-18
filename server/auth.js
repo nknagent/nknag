@@ -1,7 +1,7 @@
 
 const mount = require('koa-mount');
 const auth = require('koa-basic-auth');
-const config = require('./config.json');
+const config = require('../config.json');
 
 // require auth
 // custom 401 handling
@@ -15,7 +15,7 @@ module.exports = {
             if (err.status === 401) {
                 ctx.status = 401;
                 ctx.set('WWW-Authenticate', 'Basic');
-                ctx.body = 'cant haz that';
+                ctx.body = 'Athorization Failed.';
             } else {
                 throw err;
             }
