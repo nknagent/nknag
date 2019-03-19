@@ -1,0 +1,11 @@
+title NKN Agent - Add Node
+
+div(width='30%', align='center')
+    textarea(rows='4', cols='50', name='server', form='usrform', placeholder="One IP Per Line...")
+    form#usrform(action='add', method='POST')
+        br
+        input(type='submit', style='height:30px; width:70px;')
+    a(style='color: #4286f4') #{result}
+    br
+    br
+    a(href='/') Back

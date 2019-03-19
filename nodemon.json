@@ -1,0 +1,5 @@
+{
+    "verbose": false,
+    "watch": ["./server", "nodemon.json", "./views/*.pug"],
+    "ignore": ["server/db.json", "server/config.json"]
+}
