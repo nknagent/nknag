@@ -21,12 +21,14 @@ router
     .post('/server/add', async (ctx, next) => {
         ctx.body = ctx.request.body;
 
-        const IPs = JSON.stringify(ctx.body.server).match(IP_EXTRACT);
+        const IPs = (ctx.body.server).match(IP_EXTRACT);
 
         if (IPs === null || !Array.isArray(IPs)) {
-            await ctx.render('server/add', { result: '' });
+            await ctx.render('server/add', { result: 'Error!' });
             return next();
         }
+
+        debug(`Total IPs extracted: ${IPs.length || 0}`);
 
         const promises = [];
 
