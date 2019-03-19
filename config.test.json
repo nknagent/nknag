@@ -1,9 +1,0 @@
-{
-    "auth": {
-        "username": "hey",
-        "pwd": "ho"
-    },
-    "DB": {
-        "saveInterval": 10000
-    }
-}
