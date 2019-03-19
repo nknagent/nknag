@@ -1,6 +1,6 @@
 {
   "name": "nkn-agent",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Easy to install/upgrade and control NKN's Node",
   "main": "index.js",
   "repository": "https://github.com/hashtafak/nkn-agent",
