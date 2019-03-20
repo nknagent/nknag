@@ -74,6 +74,7 @@ html(lang="en")
               td=''
               td=''
 
+      //- Network Info
       script.
         $(document).ready(() => {
             $.ajax({
@@ -103,10 +104,30 @@ html(lang="en")
 
         });
 
+      //- Node Checking
       script.
         /* eslint-disable  */
         $(document).ready(() => {
             const myNodeTable = document.getElementById('MyNode');
+
+            function statistics() {
+                const status = [];
+
+                for (let x = 0, n = [...document.querySelectorAll('#MyNodeList > tbody > tr > td')]; x < n.length; x += 6) {
+                    status.push(n[x + 2].innerText);
+                }
+
+                const MyNode = {};
+                for (let i = 0; i < status.length; i++) {
+                    MyNode[status[i]] = 1 + (MyNode[status[i]] || 0);
+                }
+
+                myNodeTable.rows[1].cells[1].innerHTML = MyNode.PersistFinished || 0;
+                myNodeTable.rows[1].cells[2].innerHTML = MyNode.WaitForSyncing || 0;
+                myNodeTable.rows[1].cells[3].innerHTML = MyNode.SyncFinished || 0;
+                myNodeTable.rows[1].cells[4].innerHTML = MyNode.SyncStarted || 0;
+                myNodeTable.rows[1].cells[5].innerHTML = MyNode.Offline || 0;
+            }
 
             const myNodeListTable = document.getElementById('MyNodeList');
             const promises = [];
@@ -154,31 +175,24 @@ html(lang="en")
                 promises.push(rq);
             }
 
+            let xInterval;
+            const xTimeout = setTimeout(() => {
+                xInterval = setInterval(statistics, 5000);
+            }, 3000);
+
             Promise.all(promises.map(p => p.catch(() => undefined)))
               .then(() => {
-                let status = []
-
-                for (let x = 0, n = [...document.querySelectorAll('#MyNodeList > tbody > tr > td')]; x < n.length; x += 6) {
-                    status.push(n[x + 2].innerText)
-                }
-
-                const MyNode = {};
-                for (var i = 0; i < status.length; i++) {
-                    MyNode[status[i]] = 1 + (MyNode[status[i]] || 0);
-                }
-
-                myNodeTable.rows[1].cells[1].innerHTML = MyNode['PersistFinished'] || 0
-                myNodeTable.rows[1].cells[2].innerHTML = MyNode['WaitForSyncing'] || 0
-                myNodeTable.rows[1].cells[3].innerHTML = MyNode['SyncFinished'] || 0
-                myNodeTable.rows[1].cells[4].innerHTML = MyNode['SyncStarted'] || 0
-                myNodeTable.rows[1].cells[5].innerHTML = MyNode['Offline'] || 0
+                clearInterval(xInterval);
+                setTimeout(statistics, 3000);
 
                 setTimeout(() => {
                   document.location.reload(true);
                 }, 60000 + 5*myNodeListTable.rows.length*100);
             });
         });
+        /* eslint-enable  */
 
+      //- Show AuthKey
       script.
         $(document).ready(() => {
           $('#btnAuthKey').click(()=>{

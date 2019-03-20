@@ -4,8 +4,8 @@ const debug = require('debug')('nknag:app');
 
 global.config = require('./config.json');
 
-if (fs.existsSync(path.resolve(__dirname, '../db.json'))) {
-    global.DB = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../db.json')));
+if (fs.existsSync(path.resolve(__dirname, './db.json'))) {
+    global.DB = JSON.parse(fs.readFileSync(path.resolve(__dirname, './db.json')));
 } else {
     global.DB = { serverList: [] };
 }
