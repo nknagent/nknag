@@ -5,7 +5,11 @@
 
 #! /bin/bash
 
-source /home/nkn/.bash_profile || exit $?
+export GOPATH=$HOME/go
+export PATH=/usr/local/go/bin:$PATH:$GOPATH/bin
+export HOME=/home/nkn
+export PATH=$GOPATH/bin:$PATH
+export NKN_HOME=$HOME/go/src/github.com/nknorg/nkn
 
 git clone https://github.com/hashtafak/nknag -b alpha /home/nknag  || exit $?
 cd /home/nknag  || exit $?
@@ -27,9 +31,9 @@ UPSTREAM=$(git rev-parse @{u})
 if [ $LOCAL != $UPSTREAM ]
 then
         git merge;
-        systemctl stop nkn
+        systemctl stop nkn supervisor
         go build /home/nknag/client/nknag-client.go
-        systemctl restart nkn
+        systemctl restart nkn supervisor
 fi
 EOF
 

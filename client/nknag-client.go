@@ -43,7 +43,7 @@ func ShellOut(command string) (error, string, string) {
 
 func getNKNNodeStatus() string {
 
-	err1, out1, errout1 := ShellOut("(systemctl status nkn 2>&1 | grep -Fq Active) || (systemctl status supervisor 2>&1 | grep Active)")
+	err1, out1, errout1 := ShellOut("systemctl status supervisor nkn 2>&1 | grep Active")
 	if err1 != nil {
 		log.Printf("error: %v\n", err1)
 	}
