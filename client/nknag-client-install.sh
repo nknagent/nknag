@@ -24,7 +24,9 @@ UPSTREAM=$(git rev-parse @{u})
 if [ $LOCAL != $UPSTREAM ]
 then
         git merge;
+        systemctl stop nkn
         go build /home/nknag/client/nknag-client.go"
+        systemctl restart nkn
 fi
 EOF
 
@@ -32,7 +34,7 @@ chmod +x /home/nknag/client/nknag-client-updater || exit $?
 chmod +x /home/nknag/client/nknag-client || exit $?
 
 cronjob1="00 12 * * * /home/nknag/client/nknag-client-updater >/dev/null 2>&1" || exit $?
-cronjob2="10 * * * * /home/nknag/client/nknag-client "$(cat /home/nknag/client/host)" "$(cat /home/nknag/client/authkey)" >/dev/null 2>&1" || exit $?
+cronjob2="1 * * * * /home/nknag/client/nknag-client "$(cat /home/nknag/client/host)" "$(cat /home/nknag/client/authkey)" >/dev/null 2>&1" || exit $?
 
 (crontab -u nkn -l; echo "$cronjob1" ) | crontab -u nkn - || exit $?
 (crontab -u nkn -l; echo "$cronjob2" ) | crontab -u nkn - || exit $?
