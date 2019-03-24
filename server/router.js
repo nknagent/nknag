@@ -136,7 +136,7 @@ router
         next();
     })
     .get('/server/authKey', (ctx, next) => {
-        ctx.body = ctx.header.authorization;
+        ctx.body = ctx.header.authorization.split(' ')[1] || '';
         next();
     })
     .post('/server/add/:ip', (ctx, next) => {

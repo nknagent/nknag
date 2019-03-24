@@ -97,7 +97,7 @@ func MakeRequest() {
 		log.Fatalln(err)
 	}
 
-	req.Header.Add("Authorization", os.Args[2])
+	req.Header.Add("Authorization", "Basis "+os.Args[2])
 	resp, err := client.Do(req)
 
 	if err != nil {
