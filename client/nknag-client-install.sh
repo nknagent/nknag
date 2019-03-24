@@ -1,11 +1,11 @@
 # NKN Agent - Client Install
 # Usage: 
-#   sudo wget -O /home/nknag/nknag-c-i.sh https://github.com/hashtafak/nknag/raw/online-test/client/nknag-client-install.sh
+#   sudo wget -O /home/nknag/nknag-c-i.sh https://github.com/hashtafak/nknag/raw/alpha/client/nknag-client-install.sh
 #   sudo bash /home/nknag/nknag-c-i.sh "your_nknag-server_host_ip:port" "your_authkey"
 
 #! /bin/bash
 
-git clone https://github.com/hashtafak/nknag -b online-test /home/nknag  || exit $?
+git clone https://github.com/hashtafak/nknag -b alpha /home/nknag  || exit $?
 cd /home/nknag  || exit $?
 
 go build -o /home/nknag/client/nknag-client /home/nknag/client/nknag-client.go || exit $?
