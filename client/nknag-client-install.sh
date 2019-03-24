@@ -23,7 +23,11 @@ echo $2 > /home/nknag/client/authkey  || exit $?
 
 cat > /home/nknag/client/nknag-client-updater << 'EOF' || exit $?
 #!/bin/bash
-PATH=/usr/local/go/bin:$PATH
+export GOPATH=$HOME/go
+export PATH=/usr/local/go/bin:$PATH:$GOPATH/bin
+export HOME=/home/nkn
+export PATH=$GOPATH/bin:$PATH
+export NKN_HOME=$HOME/go/src/github.com/nknorg/nkn
 cd /home/nknag
 git fetch &>/dev/null
 LOCAL=$(git rev-parse HEAD)
