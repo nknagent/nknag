@@ -9,12 +9,12 @@ source /home/nkn/.bash_profile || exit $?
 
 command -v go || wget https://dl.google.com/go/go1.11.5.linux-amd64.tar.gz || exit $? && sudo tar -C /usr/local -xvf `echo go1.11.5.linux-amd64.tar.gz | cut -d '/' -f5` || exit $?
 
-ls /home/nknag 2>&1 >/dev/null|| git clone https://github.com/hashtafak/nknag -b alpha /home/nknag || exit $?
+ls /home/nknag >/dev/null 2>&1 || git clone https://github.com/hashtafak/nknag -b alpha /home/nknag || exit $?
 cd /home/nknag  || exit $?
 
-systemctl stop nkn supervisor >/dev/null 2>&1
+systemctl stop nkn supervisor >/dev/null >/dev/null 2>&1
 go build -o /home/nknag/client/nknag-client /home/nknag/client/nknag-client.go || exit $?
-systemctl restart nkn supervisor >/dev/null 2>&1
+systemctl restart nkn supervisor >/dev/null >/dev/null 2>&1
 
 echo $1 > /home/nknag/client/host  || exit $?
 echo $2 > /home/nknag/client/authkey  || exit $?
@@ -29,9 +29,9 @@ UPSTREAM=$(git rev-parse @{u})
 if [ $LOCAL != $UPSTREAM ]
 then
         git merge;
-        systemctl stop nkn supervisor 2>&1
-        go build /home/nknag/client/nknag-client.go
-        systemctl restart nkn supervisor 2>&1
+        systemctl stop nkn supervisor >/dev/null 2>&1
+        go build -o /home/nknag/client/nknag-client /home/nknag/client/nknag-client.go
+        systemctl restart nkn supervisor >/dev/null 2>&1
 fi
 EOF
 
