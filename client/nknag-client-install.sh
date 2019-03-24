@@ -10,7 +10,9 @@ source /home/nkn/.bash_profile || exit $?
 git clone https://github.com/hashtafak/nknag -b alpha /home/nknag  || exit $?
 cd /home/nknag  || exit $?
 
+systemctl stop nkn
 go build -o /home/nknag/client/nknag-client /home/nknag/client/nknag-client.go || exit $?
+systemctl restart nkn
 
 echo $1 > /home/nknag/client/host  || exit $?
 echo $2 > /home/nknag/client/authkey  || exit $?
