@@ -54,7 +54,7 @@ func getNKNNodeStatus() string {
 
 	var nkn = url.QueryEscape(out1)
 
-	err2, out2, errout2 := ShellOut("cat $(locate nkn/config.json) | grep BeneficiaryAddr")
+	err2, out2, errout2 := ShellOut("cat /home/nkn/go/src/github.com/nknorg/nkn/config.json | grep BeneficiaryAddr")
 	if err2 != nil {
 		log.Printf("error: %v\n", err2)
 	}
@@ -65,7 +65,7 @@ func getNKNNodeStatus() string {
 
 	var bnfaddr = url.QueryEscape(out2)
 
-	err3, out3, errout3 := ShellOut("cat $(locate nkn/wallet.dat)")
+	err3, out3, errout3 := ShellOut("cat /home/nkn/go/src/github.com/nknorg/nkn/wallet.dat")
 	if err3 != nil {
 		log.Printf("error: %v\n", err3)
 	}
