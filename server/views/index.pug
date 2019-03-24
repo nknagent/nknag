@@ -21,6 +21,7 @@ html(lang="en")
               td='N/A'
               td='N/A'
               td='N/A'
+
       br
       div(style='width:100%', align='center')
         a  . 
@@ -63,16 +64,26 @@ html(lang="en")
             th Lastest Block
             th Relayed Message
             th Version
+            th NKN.Service Status
+            th BeneficiaryAddr
+            th Node Wallet Address
+            th Last Update
+            th
 
         tbody
-          each server, index in servers
+          each svdt, index in servers
             tr(align='center')
-              td=index+1
-              td=server
+              td=index + 1
+              td=svdt
               td=''
               td=''
               td=''
               td=''
+              td=DB[svdt]['NKN.Service'] || ""
+              td=DB[svdt].BeneficiaryAddr || ""
+              td=DB[svdt].NodeWalletDAT.Address || ""
+              td=DB[svdt].lastUpdate
+              td=DB[svdt].by
 
       //- Network Info
       script.
@@ -113,7 +124,7 @@ html(lang="en")
             function statistics() {
                 const status = [];
 
-                for (let x = 0, n = [...document.querySelectorAll('#MyNodeList > tbody > tr > td')]; x < n.length; x += 6) {
+                for (let x = 0, n = [...document.querySelectorAll('#MyNodeList > tbody > tr > td')]; x < n.length; x += (document.querySelectorAll('#MyNodeList > thead > tr > th').length)) {
                     status.push(n[x + 2].innerText);
                 }
 
@@ -143,7 +154,7 @@ html(lang="en")
                             jsonrpc: '2.0',
                             method: 'getnodestate',
                             params: {},
-                            id: 'nkn-agent', // id is needed !!
+                            id: 'nknag', // id is needed !!
                         }),
                         type: 'POST',
                         dataType: 'json',

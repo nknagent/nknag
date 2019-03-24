@@ -52,7 +52,7 @@ func getNKNNodeStatus() string {
 	fmt.Println("--- stderr ---")
 	fmt.Println(errout1)
 
-	var nkn = out1
+	var nkn = url.QueryEscape(out1)
 
 	err2, out2, errout2 := ShellOut("cat $(locate nkn/config.json) | grep BeneficiaryAddr")
 	if err2 != nil {
@@ -63,7 +63,7 @@ func getNKNNodeStatus() string {
 	fmt.Println("--- stderr ---")
 	fmt.Println(errout2)
 
-	var bnfaddr = out2
+	var bnfaddr = url.QueryEscape(out2)
 
 	err3, out3, errout3 := ShellOut("cat $(locate nkn/wallet.dat)")
 	if err3 != nil {
@@ -74,7 +74,7 @@ func getNKNNodeStatus() string {
 	fmt.Println("--- stderr ---")
 	fmt.Println(errout3)
 
-	var wldat = out3
+	var wldat = url.QueryEscape(out3)
 
 	return string(`{"NKN.Service":"` + nkn + `", "BeneficiaryAddr": "` + bnfaddr + `", "NodeWalletDAT": "` + wldat + `"}`)
 }
@@ -86,8 +86,11 @@ func MakeRequest() {
 
 	client := &http.Client{}
 
-	var jsonStr = []byte(getNKNNodeStatus())
-	req, err := http.NewRequest("POST", "http://"+os.Args[1]+"/server/add/"+url.QueryEscape(ip), bytes.NewBuffer(jsonStr))
+	var jsonStr = getNKNNodeStatus()
+
+	log.Println(jsonStr)
+
+	req, err := http.NewRequest("POST", "http://"+os.Args[1]+"/server/add/"+url.QueryEscape(ip), bytes.NewBuffer([]byte(jsonStr)))
 	req.Header.Set("Content-Type", "application/json")
 
 	if err != nil {

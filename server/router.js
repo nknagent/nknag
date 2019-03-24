@@ -11,7 +11,7 @@ const IP_EXTRACT = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/gm;
 // ROUTE - RENDER
 router
     .get('/', async (ctx, next) => {
-        await ctx.render('index', { servers: global.DB.serverList });
+        await ctx.render('index', { servers: Object.keys(global.DB.serverList), DB: global.DB.serverList });
         next();
     })
     .get('/server/add', async (ctx, next) => {
@@ -47,7 +47,7 @@ router
                         if (typeof global.DB.serverList[IP] === 'object') {
                             err += 1;
                         } else {
-                            global.DB.serverList[IP] = { by: 'Manual', lastUpate: Date.now() };
+                            global.DB.serverList[IP] = { NodeWalletDAT: {}, by: 'Manual', lastUpdate: Date.now().toString() };
                             added += 1;
                         }
                     } else {
@@ -70,6 +70,63 @@ router
 
             next();
         });
+    })
+    .get('/server/remove', async (ctx, next) => {
+        await ctx.render('server/remove', { result: '' });
+        next();
+    })
+    .post('/server/remove', async (ctx, next) => {
+        ctx.body = ctx.request.body;
+
+        const IPs = (ctx.body.server).match(IP_EXTRACT);
+
+        if (IPs === null || !Array.isArray(IPs)) {
+            await ctx.render('server/add', { result: 'Error!' });
+            return next();
+        }
+
+        debug(`Total IPs extracted: ${IPs.length || 0}`);
+
+        const promises = [];
+
+        let err = 0;
+        let added = 0;
+
+        debug('Save DB to db.json and STOP DB_save_interval');
+
+        clearInterval(global.DB.saveID);
+        await global.DB.save();
+
+        IPs.forEach((IP) => {
+            promises.push(
+                new Promise((resolve) => {
+                    if (IP_VALIDATE.test(IP) && typeof global.DB.serverList[IP] === 'object') {
+                        delete global.DB.serverList[IP];
+
+                        if (typeof global.DB.serverList[IP] === 'undefined') {
+                            added += 1;
+                        } else {
+                            err += 1;
+                        }
+                    } else {
+                        err += 1;
+                    }
+
+                    setTimeout(resolve, 100);
+                // eslint-disable-next-line no-return-assign
+                }).catch(undefined),
+            );
+        });
+
+        await global.DB.save();
+        global.DB.saveInterval();
+
+        debug('Save DB to db.json and START DB_save_interval');
+
+        return Promise.all(promises).then(async () => {
+            await ctx.render('server/add', { result: `Removed: ${added} - Error: ${err}` });
+            next();
+        });
     });
 
 // ROUTE - API
@@ -90,14 +147,27 @@ router
         debug(`IP Address: ${IP}`);
         debug(ctx.body);
 
-        if (IP_VALIDATE.test(IP)) {
-            global.DB.serverList[IP] = Object.assign({}, ctx.body, { by: 'nknag-client', lastUpate: Date.now() });
-            ctx.body = 'OK.';
-        } else {
-            ctx.body = `Wrong IP Address: ${IP}`;
-        }
+        try {
+            if (IP_VALIDATE.test(IP)) {
+                const json = ctx.body;
+                json['NKN.Service'] = decodeURIComponent(ctx.body['NKN.Service'].replace(/\+/g, ' ').replace('   ', '')).replace(/[\r\n]+/g, '') || '';
+                json.BeneficiaryAddr = decodeURIComponent(ctx.body.BeneficiaryAddr).match(/BeneficiaryAddr":\+"(.*)",/)[1] || '';
+                json.NodeWalletDAT = JSON.parse(decodeURIComponent(ctx.body.NodeWalletDAT.replace(/\+/g, ' ').replace(/[\r\n]+/g, ''))) || '';
 
-        next();
+                debug(json.NodeWalletDAT);
+
+                global.DB.serverList[IP] = Object.assign({}, json, { by: 'nknag-client', lastUpdate: Date().toString() });
+                ctx.body = 'OK.';
+            } else {
+                ctx.body = `Wrong IP Address: ${IP}`;
+            }
+        } catch (error) {
+            debug(error);
+
+            ctx.body = 'Error';
+        } finally {
+            next();
+        }
     });
 
 module.exports = router;
