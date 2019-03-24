@@ -15,8 +15,7 @@ sudo apt-get install -y make curl git || exit $?
 id -u nkn &>/dev/null || adduser --disabled-password --gecos "" nkn || exit $?
 #usermod -aG sudo nkn || exit $?
 
-wget https://dl.google.com/go/go1.11.5.linux-amd64.tar.gz || exit $?
-sudo tar -C /usr/local -xvf `echo go1.11.5.linux-amd64.tar.gz | cut -d '/' -f5` || exit $?
+command -v go || wget https://dl.google.com/go/go1.11.5.linux-amd64.tar.gz || exit $? && sudo tar -C /usr/local -xvf `echo go1.11.5.linux-amd64.tar.gz | cut -d '/' -f5` || exit $?
 
 cat > /home/nkn/.bash_profile << 'EOF' || exit $?
 export GOPATH=$HOME/go
