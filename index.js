@@ -7,7 +7,7 @@ global.config = require('./config.json');
 if (fs.existsSync(path.resolve(__dirname, './db.json'))) {
     global.DB = JSON.parse(fs.readFileSync(path.resolve(__dirname, './db.json')));
 } else {
-    global.DB = { serverList: [] };
+    global.DB = { serverList: {} };
 }
 
 global.DB.save = () => {

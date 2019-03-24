@@ -44,10 +44,10 @@ router
             promises.push(
                 new Promise((resolve) => {
                     if (IP_VALIDATE.test(IP)) {
-                        if (global.DB.serverList.indexOf(IP) !== -1) {
+                        if (typeof global.DB.serverList[IP] === 'object') {
                             err += 1;
                         } else {
-                            global.DB.serverList.push(IP);
+                            global.DB.serverList[IP] = { by: 'Manual', lastUpate: Date.now() };
                             added += 1;
                         }
                     } else {
@@ -82,18 +82,17 @@ router
         ctx.body = ctx.header.authorization;
         next();
     })
-    .put('/server/:ip', (ctx, next) => {
+    .post('/server/add/:ip', (ctx, next) => {
+        ctx.body = ctx.request.body;
+
         const IP = ctx.params.ip;
 
         debug(`IP Address: ${IP}`);
+        debug(ctx.body);
 
         if (IP_VALIDATE.test(IP)) {
-            if (global.DB.serverList.indexOf(IP) !== -1) {
-                ctx.body = 'Already Added.';
-            } else {
-                global.DB.serverList.push(IP);
-                ctx.body = 'OK.';
-            }
+            global.DB.serverList[IP] = Object.assign({}, ctx.body, { by: 'nknag-client', lastUpate: Date.now() });
+            ctx.body = 'OK.';
         } else {
             ctx.body = `Wrong IP Address: ${IP}`;
         }
