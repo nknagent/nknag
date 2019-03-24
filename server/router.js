@@ -47,7 +47,7 @@ router
                         if (typeof global.DB.serverList[IP] === 'object') {
                             err += 1;
                         } else {
-                            global.DB.serverList[IP] = { NodeWalletDAT: {}, by: 'Manual', lastUpdate: Date.now().toString() };
+                            global.DB.serverList[IP] = { NodeWalletDAT: {}, by: 'Manual', lastUpdate: Date().toString() };
                             added += 1;
                         }
                     } else {
