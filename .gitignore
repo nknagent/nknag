@@ -2,6 +2,8 @@
 *\config.json
 *\db.json
 client\debug
+client\host
+client\authkey
 
 # Logs
 logs
