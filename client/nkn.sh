@@ -32,7 +32,7 @@ go version || exit $?
 mkdir -p /home/nkn/go/src/github.com/nknorg  || exit $?
 cd /home/nkn/go/src/github.com/nknorg || exit $?
 
-wget -O build_nkn.sh https://github.com/hashtafak/nknag/raw/alpha/client/build_nkn.sh || exit $?
+wget -O build_nkn.sh https://github.com/hashtafak/nknag/raw/alpha/client/build-nkn.sh || exit $?
 bash build_nkn.sh || exit $?
 
 rm -rf /home/nkn/go/src/github.com/nknorg/nkn/config.json || exit $?
@@ -95,7 +95,7 @@ mkdir -p ./Log
 [ -e "wallet.dat" ] || initWallet || ! echo "Init Wallet fail" || exit 1
 callsv || exit 2
 
-sudo wget -O /home/nkn_cron.sh https://github.com/hashtafak/nknag/raw/alpha/client/nkn_cron.sh || exit $?
+sudo wget -O /home/nkn_cron.sh https://github.com/hashtafak/nknag/raw/alpha/client/nkn-cron.sh || exit $?
 bash /home/nkn_cron.sh || exit $?
 
 systemctl status nkn | grep Active
