@@ -150,9 +150,11 @@ router
         try {
             if (IP_VALIDATE.test(IP)) {
                 const json = ctx.body;
-                json['NKN.Service'] = decodeURIComponent(ctx.body['NKN.Service'].replace(/\+/g, ' ').replace('   ', '')).replace(/[\r\n]+/g, '') || '';
-                json.BeneficiaryAddr = (ctx.body.BeneficiaryAddr.length > 0) ? decodeURIComponent(ctx.body.BeneficiaryAddr).match(/BeneficiaryAddr":\+"(.*)",/)[1] : '';
-                json.NodeWalletDAT = (ctx.body.BeneficiaryAddr.length > 0) ? JSON.parse(decodeURIComponent(ctx.body.NodeWalletDAT.replace(/\+/g, ' ').replace(/[\r\n]+/g, ''))) : '';
+                json['NKN.Service'] = ctx.body['NKN.Service'].replace('   ', '').replace(/[\r\n]+/g, '') || '';
+
+                debug(json.BeneficiaryAddr);
+                json.BeneficiaryAddr = (ctx.body.BeneficiaryAddr.length > 0) ? ctx.body.BeneficiaryAddr.match(/BeneficiaryAddr': '(.*)',/)[1] : '';
+                json.NodeWalletDAT = (ctx.body.BeneficiaryAddr.length > 0) ? JSON.parse(ctx.body.NodeWalletDAT.replace(/'/g, '"')) : '';
 
                 debug(json.NodeWalletDAT);
 
