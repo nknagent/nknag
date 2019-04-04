@@ -89,7 +89,7 @@ html(lang="en")
       script.
         $(document).ready(() => {
             $.ajax({
-                url: 'https://api2.nknx.org/crawledNodes',
+                url: 'https://api.nknx.org/crawledNodes',
                 type: 'GET',
                 dataType: 'json',
                 success(crawledNodes) {
@@ -100,7 +100,7 @@ html(lang="en")
             });
             
             $.ajax({
-                url: 'https://api2.nknx.org/statistics/network',
+                url: 'https://api.nknx.org/statistics/network',
                 type: 'GET',
                 dataType: 'json',
                 success(networkStatistics) {
