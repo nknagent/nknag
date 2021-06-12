@@ -39,15 +39,19 @@ html(lang="en")
         thead
           tr
             th ALL
-            th PersistFinished
-            th WaitForSyncing
-            th SyncFinished
-            th SyncStarted
-            th Error/Offline
-          
+            th PERSIST_FINISHED
+            th WAIT_FOR_SYNCING
+            th SYNC_FINISHED
+            th SYNC_STARTED
+            th NO_ID
+            th INTERNAL_ERROR
+            th ERROR / OFFLINE
+            
         tbody
             tr(align='center')
               td=servers.length
+              td=0
+              td=0
               td=0
               td=0
               td=0
@@ -78,30 +82,52 @@ html(lang="en")
       script.
         $(document).ready(() => {
             $.ajax({
-                url: 'https://api2.nknx.org/crawledNodes',
-                type: 'GET',
-                dataType: 'json',
-                success(crawledNodes) {
-                    if (crawledNodes.length > 0) {
-                        document.getElementById('Network').rows[1].cells[0].innerHTML = crawledNodes.length;
-                    }
-                },
-            });
-            
-            $.ajax({
-                url: 'https://api2.nknx.org/statistics/network',
+                url: 'https://api.nknx.org/network/stats',
                 type: 'GET',
                 dataType: 'json',
                 success(networkStatistics) {
                     try {
-                        document.getElementById('Network').rows[1].cells[1].innerHTML = networkStatistics.status
-                        document.getElementById('Network').rows[1].cells[2].innerHTML = networkStatistics.version
-                        document.getElementById('Network').rows[1].cells[3].innerHTML = networkStatistics.current_height
-                        document.getElementById('Network').rows[1].cells[4].innerHTML = networkStatistics.latest_block
+                      document.getElementById('Network').rows[1].cells[0].innerText = networkStatistics.totalNodes;
                     } catch {}
                 },
             });
 
+            $.ajax({
+                url: 'https://openapi.nkn.org/api/v1/blocks?per_page=1&page=1',
+                type: 'GET',
+                dataType: 'json',
+                success(networkStatistics) {
+                    try {
+                      document.getElementById('Network').rows[1].cells[3].innerHTML = networkStatistics.blocks.data[0].id;
+                      document.getElementById('Network').rows[1].cells[4].innerHTML = networkStatistics.blocks.data[0].id;
+                    } catch {}
+                },
+            });
+
+            //- $.ajax({
+            //-     url: 'https://openapi.nkn.org/api/v1/statistics/counts',
+            //-     type: 'GET',
+            //-     dataType: 'json',
+            //-     success(networkStatistics) {
+            //-         try {
+            //-           document.getElementById('Network').rows[1].cells[3].innerHTML = networkStatistics.blockCount;
+            //-         } catch {}
+            //-     },
+            //- });
+            
+            //- $.ajax({
+            //-     url: 'https://api2.nknx.org/statistics/network',
+            //-     type: 'GET',
+            //-     dataType: 'json',
+            //-     success(networkStatistics) {
+            //-         try {
+            //-             document.getElementById('Network').rows[1].cells[1].innerHTML = networkStatistics.status
+            //-             document.getElementById('Network').rows[1].cells[2].innerHTML = networkStatistics.version
+            //-             document.getElementById('Network').rows[1].cells[3].innerHTML = networkStatistics.current_height
+            //-             document.getElementById('Network').rows[1].cells[4].innerHTML = networkStatistics.latest_block
+            //-         } catch {}
+            //-     },
+            //- });
         });
 
       //- Node Checking
@@ -112,21 +138,31 @@ html(lang="en")
 
             function statistics() {
                 const status = [];
-
+                
                 for (let x = 0, n = [...document.querySelectorAll('#MyNodeList > tbody > tr > td')]; x < n.length; x += 6) {
                     status.push(n[x + 2].innerText);
                 }
 
+                const STATUS_CONST = ['PERSIST_FINISHED', 'WAIT_FOR_SYNCING', 'SYNC_FINISHED', 'SYNC_STARTED', 'OFFLINE', 'ERROR', 'INTERNAL_ERROR']
+
                 const MyNode = {};
                 for (let i = 0; i < status.length; i++) {
+                  if (STATUS_CONST.includes(status[i])) {
                     MyNode[status[i]] = 1 + (MyNode[status[i]] || 0);
+                  } else {
+                    MyNode['NO_ID'] = 1 + (MyNode['NO_ID'] || 0);
+                  }
                 }
 
-                myNodeTable.rows[1].cells[1].innerHTML = MyNode.PersistFinished || 0;
-                myNodeTable.rows[1].cells[2].innerHTML = MyNode.WaitForSyncing || 0;
-                myNodeTable.rows[1].cells[3].innerHTML = MyNode.SyncFinished || 0;
-                myNodeTable.rows[1].cells[4].innerHTML = MyNode.SyncStarted || 0;
-                myNodeTable.rows[1].cells[5].innerHTML = MyNode.Offline || 0;
+                myNodeTable.rows[1].cells[1].innerHTML = MyNode.PERSIST_FINISHED || 0;
+                myNodeTable.rows[1].cells[2].innerHTML = MyNode.WAIT_FOR_SYNCING || 0;
+                myNodeTable.rows[1].cells[3].innerHTML = MyNode.SYNC_FINISHED || 0;
+                myNodeTable.rows[1].cells[4].innerHTML = MyNode.SYNC_STARTED || 0;
+                myNodeTable.rows[1].cells[5].innerHTML = MyNode.NO_ID || 0;
+                myNodeTable.rows[1].cells[6].innerHTML = MyNode.INTERNAL_ERROR || 0;
+                myNodeTable.rows[1].cells[7].innerHTML = MyNode.OFFLINE || 0;
+
+                //- console.log(MyNode);
             }
 
             const myNodeListTable = document.getElementById('MyNodeList');
@@ -156,15 +192,24 @@ html(lang="en")
                                 myNodeListTable.rows[r].cells[5].innerHTML = data.result.version;
                                 
                                 resolve();
+                            } else if (data.error.walletAddress !== undefined) {
+                                myNodeListTable.rows[r].cells[2].innerHTML = data.error.walletAddress;
+                                
+                                resolve();
+                            } else if (data.error.code === -45024) {
+                                myNodeListTable.rows[r].cells[2].innerHTML = 'INTERNAL_ERROR';
+                                //- console.log(`${ip} - ${data}`);
+                                
+                                resolve();
                             } else {
-                                myNodeListTable.rows[r].cells[2].innerHTML = 'Offline';
-                                console.log(data);
+                                myNodeListTable.rows[r].cells[2].innerHTML = 'ERROR';
+                                console.log(`${ip} - ${data}`);
                                 
                                 reject();
                             }
                         },
                         error(err) {
-                            myNodeListTable.rows[r].cells[2].innerHTML = 'Offline';
+                            myNodeListTable.rows[r].cells[2].innerHTML = 'OFFLINE';
                             console.log(err);
                             
                             reject();
