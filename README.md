@@ -2,14 +2,13 @@
 Easy to control/update NKN's Node
 
 ## Project status
-* Current release status: v0.1.2-alpha (pre-release)
-* KNAG Client written in Golang is deprecated. Just use Curl and setup crontab in your node. https://github.com/hashtafak/nknag/raw/alpha/client/nknag-client.sh
+* Current release status: v0.1
+* NKNAG Client written in Golang is **deprecated**.
 * Shell Script rewrite/Vue frontend collaborators needed
-* NKNAG Client tested with Ubuntu 18.04LTS
 
 ## Simple Node Manager focus on NKN Node Management
 
-<img src="https://image.prntscr.com/image/q9kYjJylRIOS0msmEq-FFA.png" width="650" height="350" />
+<img src="https://i.imgur.com/U67cwDW.jpg" />
 
 ## Installation NKNAG Server
 ```
@@ -27,12 +26,8 @@ Then go to `http://localhost:3000`
 * Manual add your server: `http://localhost:3000/server/add`
 * Your online app will listen at `http://your_public_ip_address:3000`
 
-## Installation NKNAG Client
-### NKNAG Client only
-```
-sudo wget -O /home/nknag-c-i.sh https://github.com/hashtafak/nknag/raw/alpha/client/nknag-client.sh
-sudo bash /home/nknag-c-i.sh "your_nknag-server_host_ip:port" "your_authkey"
-```
+## Installation NKNAG Client (deprecated)
+
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
