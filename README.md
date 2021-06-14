@@ -1,6 +1,8 @@
 # NKN Agent
 Easy to control/update NKN's Node
 
+Donate: NKNCTCu64Eg87tJX55wF3k4AGRenzZUFqjhK
+
 ## Project status
 * Current release status: v0.1
 * NKNAG Client written in Golang is **deprecated**.
