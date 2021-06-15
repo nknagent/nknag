@@ -1,0 +1,23 @@
+{
+    "id": "nkn-agent",
+    "jsonrpc": "2.0",
+    "result": {
+        "addr": "tcp://52.170.210.104:30001",
+        "currTimeStamp": 1623690761,
+        "height": 2747117,
+        "id": "ae52adc15f0e9ec935a3c6cde3c2291b3c9a3b1d55d956f46acf5c4358c11f39",
+        "jsonRpcPort": 30003,
+        "proposalSubmitted": 0,
+        "protocolVersion": 40,
+        "publicKey": "fcfe12bfc81261f112fd98aa5840d9d248dd565a0d6247f775df1002d65e3d93",
+        "relayMessageCount": 4219590,
+        "syncState": "SYNC_STARTED",
+        "tlsJsonRpcDomain": "52-170-210-104.ipv4.nknlabs.io",
+        "tlsJsonRpcPort": 30005,
+        "tlsWebsocketDomain": "52-170-210-104.ipv4.nknlabs.io",
+        "tlsWebsocketPort": 30004,
+        "uptime": 103033,
+        "version": "v2.1.4-1-ge32a",
+        "websocketPort": 30002
+    }
+}

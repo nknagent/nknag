@@ -24,14 +24,14 @@ html(lang="en")
       br
       div(style='width:100%', align='center')
         a  . 
-        a#btnAuthKey(class="button", style='background-color: #a0a9bc; cursor: pointer') Client AuthKey
+        a#btnAuthKey(class="button", style='disabled; background-color: #a0a9bc; cursor: pointer') Client AuthKey
         a  . 
       br
       div(style='width:100%', align='center')
         a  . 
         a(href="/server/add", style='color: #000000; background-color: #a0a9bc; text-decoration: none') Add Server
         a  . 
-        a(href="/server/remove", style='color: #000000; background-color: #a0a9bc; text-decoration: none') Remove Server
+        a(disabled="disabled", href="/server/remove", style='color: #000000; background-color: #a0a9bc; text-decoration: none') Remove Server
         a  . 
       br
 
@@ -64,15 +64,22 @@ html(lang="en")
             th ID
             th IP
             th Status
-            th Lastest Block
+            th Height
             th Relayed Message
+            th Relayed r/h
             th Version
+            th Uptime
+            //- th Last Online
+            th Mined
 
         tbody
           each server, index in servers
             tr(align='center')
               td=index+1
               td=server
+              td=''
+              td=''
+              td=''
               td=''
               td=''
               td=''
@@ -138,12 +145,21 @@ html(lang="en")
 
             function statistics() {
                 const status = [];
+
+                //- const td = [...document.querySelectorAll('#MyNodeList > tbody > tr > td')].length;
+                //- const tr = [...document.querySelectorAll('#MyNodeList > tbody > tr')].length;
+                //- const step = td/tr;
+
+                //- console.log(step);
                 
-                for (let x = 0, n = [...document.querySelectorAll('#MyNodeList > tbody > tr > td')]; x < n.length; x += 6) {
+                for (let x = 0, n = [...document.querySelectorAll('#MyNodeList > tbody > tr > td')]; x < n.length; x += 9) {
+                //- for (let x = 0, n = [...document.querySelectorAll('#MyNodeList > tbody > tr > td')]; x < n.length; x += step) {
                     status.push(n[x + 2].innerText);
                 }
 
-                const STATUS_CONST = ['PERSIST_FINISHED', 'WAIT_FOR_SYNCING', 'SYNC_FINISHED', 'SYNC_STARTED', 'OFFLINE', 'ERROR', 'INTERNAL_ERROR']
+                //- console.log(status);
+
+                const STATUS_CONST = ['Checking..','PERSIST_FINISHED', 'WAIT_FOR_SYNCING', 'SYNC_FINISHED', 'SYNC_STARTED', 'OFFLINE', 'ERROR', 'INTERNAL_ERROR']
 
                 const MyNode = {};
                 for (let i = 0; i < status.length; i++) {
@@ -165,6 +181,20 @@ html(lang="en")
                 //- console.log(MyNode);
             }
 
+            function secondsToHms(d) {
+                d = Number(d);
+                var dd = Math.floor(d / 86400);
+                var h = Math.floor(d % 86400 / 3600);
+                var m = Math.floor(d % 3600 / 60);
+                var s = Math.floor(d % 3600 % 60);
+
+                var ddDisplay = dd > 0 ? dd.toString().padStart(2, '0') + "d, " : "00d, ";
+                var hDisplay = h > 0 ? h.toString().padStart(2, '0') + "h, " : "00h, ";
+                var mDisplay = m > 0 ? m.toString().padStart(2, '0') + "m, " : "00m, ";
+                var sDisplay = s > 0 ? s.toString().padStart(2, '0') + "s" : "00s";
+                return ddDisplay + hDisplay + mDisplay + sDisplay; 
+            }
+
             const myNodeListTable = document.getElementById('MyNodeList');
             const promises = [];
 
@@ -181,15 +211,18 @@ html(lang="en")
                             params: {},
                             id: 'nkn-agent', // id is needed !!
                         }),
+                        async: true,
                         type: 'POST',
                         dataType: 'json',
-                        //- timeout: 5000,
                         success(data) {
                             if (data.result !== undefined) {
                                 myNodeListTable.rows[r].cells[2].innerHTML = data.result.syncState;
                                 myNodeListTable.rows[r].cells[3].innerHTML = data.result.height;
                                 myNodeListTable.rows[r].cells[4].innerHTML = data.result.relayMessageCount;
-                                myNodeListTable.rows[r].cells[5].innerHTML = data.result.version;
+                                myNodeListTable.rows[r].cells[5].innerHTML = (data.result.relayMessageCount/(data.result.uptime/3600)).toFixed(0);
+                                myNodeListTable.rows[r].cells[6].innerHTML = data.result.version;
+                                myNodeListTable.rows[r].cells[7].innerHTML = secondsToHms(data.result.uptime);
+                                myNodeListTable.rows[r].cells[8].innerHTML = data.result.proposalSubmitted;
                                 
                                 resolve();
                             } else if (data.error.walletAddress !== undefined) {
@@ -214,22 +247,25 @@ html(lang="en")
                             
                             reject();
                         },
+                        timeout: 10000,
                     });
                 });
 
                 promises.push(rq);
             }
 
-            let xInterval;
-            const xTimeout = setTimeout(() => {
-                xInterval = setInterval(statistics, 5000);
-            }, 3000);
+            //- let xInterval;
+            //- const xTimeout = setTimeout(() => {
+            //-     xInterval = setInterval(statistics, 5000);
+            //- }, 3000);
 
             Promise.all(promises.map(p => p.catch(() => undefined)))
               .then(() => {
-                clearInterval(xInterval);
-                setTimeout(statistics, 3000);
-
+                //- clearInterval(xInterval);
+                //- setTimeout(statistics, 3000);
+                console.log("Done checking");
+                console.log("Automatic reload after (s): " + (60000 + 5 * myNodeListTable.rows.length * 100));
+                statistics();
                 setTimeout(() => {
                   document.location.reload(true);
                 }, 60000 + 5*myNodeListTable.rows.length*100);
