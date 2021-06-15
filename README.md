@@ -1,5 +1,5 @@
 # NKN Agent
-Easy to control/update NKN's Node
+Easy-to-watch NKN's node.
 
 Donate: NKNCTCu64Eg87tJX55wF3k4AGRenzZUFqjhK
 
@@ -10,7 +10,7 @@ Donate: NKNCTCu64Eg87tJX55wF3k4AGRenzZUFqjhK
 
 ## Simple Node Manager focus on NKN Node Management
 
-<img src="https://i.imgur.com/U67cwDW.jpg" />
+<img src="https://i.imgur.com/UF5FWm3.jpg" />
 
 ## Installation NKNAG Server
 ```
