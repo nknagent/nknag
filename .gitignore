@@ -2,6 +2,7 @@
 *\config.json
 *\db.json
 client/
+default.json
 
 # Logs
 logs
