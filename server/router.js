@@ -16,6 +16,10 @@ router
         await ctx.render('index', { servers: global.DB.serverList });
         next();
     })
+    .get('/nbstat', async (ctx, next) => {
+        await ctx.render('index_nb_stat', { servers: global.DB.serverList });
+        next();
+    })
     .get('/server/add', async (ctx, next) => {
         await ctx.render('server/add', { result: '' });
         next();
@@ -77,7 +81,7 @@ router
 // ROUTE - API
 router
     .get('/server', (ctx, next) => {
-        ctx.body = 'Hello nkn-ian!';
+        ctx.body = 'Hello nkn!';
         next();
     })
     .get('/server/authKey', (ctx, next) => {
