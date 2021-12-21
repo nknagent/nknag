@@ -18,17 +18,17 @@ html(lang="en")
             th Network Total Block
             th Network Latest Block Created
         tbody
-            tr(align='center')
-              td='N/A'
-              td='N/A'
-              td='N/A'
-              td='N/A'
-              td='N/A'
+          tr(align='center')
+            td='N/A'
+            td='N/A'
+            td='N/A'
+            td='N/A'
+            td='N/A'
       //br
       //div(style='width:100%', align='center')
-        //a  . 
-        //a#btnAuthKey(class="button", style='disabled; background-color: #a0a9bc; cursor: pointer') Client AuthKey
-        //a  . 
+      //a  . 
+      //a#btnAuthKey(class="button", style='disabled; background-color: #a0a9bc; cursor: pointer') Client AuthKey
+      //a  . 
       br
       div(style='width:100%', align='center')
         a  . 
@@ -50,18 +50,18 @@ html(lang="en")
             th INTERNAL_ERROR
             th ERROR / OFFLINE
             th PROPOSAL_SUBMITTED
-            
+
         tbody
-            tr(align='center')
-              td=servers.length
-              td=0
-              td=0
-              td=0
-              td=0
-              td=0
-              td=0
-              td=0
-              td=0
+          tr(align='center')
+            td=servers.length
+            td=0
+            td=0
+            td=0
+            td=0
+            td=0
+            td=0
+            td=0
+            td=0
       br
       div(style='width:100%', align='center')
         a Auto F5: OFF
@@ -101,202 +101,222 @@ html(lang="en")
       //- Network Info
       script.
         $(document).ready(() => {
-            $.ajax({
-                url: 'https://api.nknx.org/network/stats',
-                type: 'GET',
-                dataType: 'json',
-                success(networkStatistics) {
-                    try {
-                      document.getElementById('Network').rows[1].cells[0].innerText = networkStatistics.totalNodes;
-                    } catch {}
-                },
-            });
+          $.ajax({
+            url: 'https://api.nknx.org/network/stats',
+            type: 'GET',
+            dataType: 'json',
+            success(networkStatistics) {
+              try {
+                document.getElementById('Network').rows[1].cells[0].innerText = networkStatistics.totalNodes;
+              } catch {}
+            },
+          });
 
-            $.ajax({
-                url: 'https://openapi.nkn.org/api/v1/blocks?per_page=1&page=1',
-                type: 'GET',
-                dataType: 'json',
-                success(networkStatistics) {
-                    try {
-                      document.getElementById('Network').rows[1].cells[3].innerHTML = networkStatistics.blocks.data[0].id;
-                      document.getElementById('Network').rows[1].cells[4].innerHTML = networkStatistics.blocks.data[0].header.height;
-                    } catch {}
-                },
-            });
+          $.ajax({
+            url: 'https://openapi.nkn.org/api/v1/blocks?per_page=1&page=1',
+            type: 'GET',
+            dataType: 'json',
+            success(networkStatistics) {
+              try {
+                document.getElementById('Network').rows[1].cells[3].innerHTML = networkStatistics.blocks.data[0].id;
+                document.getElementById('Network').rows[1].cells[4].innerHTML = networkStatistics.blocks.data[0].header.height;
+              } catch {}
+            },
+          });
 
-            //- $.ajax({
-            //-     url: 'https://openapi.nkn.org/api/v1/statistics/counts',
-            //-     type: 'GET',
-            //-     dataType: 'json',
-            //-     success(networkStatistics) {
-            //-         try {
-            //-           document.getElementById('Network').rows[1].cells[4].innerHTML = networkStatistics.blockCount;
-            //-         } catch {}
-            //-     },
-            //- });
-            
-            //- $.ajax({
-            //-     url: 'https://api2.nknx.org/statistics/network',
-            //-     type: 'GET',
-            //-     dataType: 'json',
-            //-     success(networkStatistics) {
-            //-         try {
-            //-             document.getElementById('Network').rows[1].cells[1].innerHTML = networkStatistics.status
-            //-             document.getElementById('Network').rows[1].cells[2].innerHTML = networkStatistics.version
-            //-             document.getElementById('Network').rows[1].cells[3].innerHTML = networkStatistics.current_height
-            //-             document.getElementById('Network').rows[1].cells[4].innerHTML = networkStatistics.latest_block
-            //-         } catch {}
-            //-     },
-            //- });
+          //- $.ajax({
+          //-     url: 'https://openapi.nkn.org/api/v1/statistics/counts',
+          //-     type: 'GET',
+          //-     dataType: 'json',
+          //-     success(networkStatistics) {
+          //-         try {
+          //-           document.getElementById('Network').rows[1].cells[4].innerHTML = networkStatistics.blockCount;
+          //-         } catch {}
+          //-     },
+          //- });
+
+          //- $.ajax({
+          //-     url: 'https://api2.nknx.org/statistics/network',
+          //-     type: 'GET',
+          //-     dataType: 'json',
+          //-     success(networkStatistics) {
+          //-         try {
+          //-             document.getElementById('Network').rows[1].cells[1].innerHTML = networkStatistics.status
+          //-             document.getElementById('Network').rows[1].cells[2].innerHTML = networkStatistics.version
+          //-             document.getElementById('Network').rows[1].cells[3].innerHTML = networkStatistics.current_height
+          //-             document.getElementById('Network').rows[1].cells[4].innerHTML = networkStatistics.latest_block
+          //-         } catch {}
+          //-     },
+          //- });
         });
 
       script.
         $(document).ready(() => {
-          
+
         });
 
       //- Node Checking
       script.
         /* eslint-disable  */
+
         $(document).ready(() => {
-            var proposalSubmitted = 0;
-            const myNodeTable = document.getElementById('MyNode');
+          var proposalSubmitted = 0;
+          const myNodeTable = document.getElementById('MyNode');
 
-            function statistics() {
-                const status = [];
+          function statistics() {
+            const status = [];
 
-                const td = [...document.querySelectorAll('#MyNodeList > tbody > tr > td')].length;
-                const tr = [...document.querySelectorAll('#MyNodeList > tbody > tr')].length;
-                const step = td/tr;
+            const td = [...document.querySelectorAll('#MyNodeList > tbody > tr > td')].length;
+            const tr = [...document.querySelectorAll('#MyNodeList > tbody > tr')].length;
+            const step = td/tr;
 
-                console.log(step);
-                
-                //- for (let x = 0, n = [...document.querySelectorAll('#MyNodeList > tbody > tr > td')]; x < n.length; x += 9) {
-                for (let x = 0, n = [...document.querySelectorAll('#MyNodeList > tbody > tr > td')]; x < n.length; x += step) {
-                    status.push(n[x + 2].innerText);
-                }
+            console.log(step);
 
-                //- console.log(status);
-
-                const STATUS_CONST = ['Checking..','PERSIST_FINISHED', 'WAIT_FOR_SYNCING', 'SYNC_FINISHED', 'SYNC_STARTED', 'OFFLINE', 'ERROR', 'INTERNAL_ERROR']
-
-                const MyNode = {};
-                for (let i = 0; i < status.length; i++) {
-                  if (STATUS_CONST.includes(status[i])) {
-                    MyNode[status[i]] = 1 + (MyNode[status[i]] || 0);
-                  } else {
-                    MyNode['NO_ID'] = 1 + (MyNode['NO_ID'] || 0);
-                  }
-                }
-
-                myNodeTable.rows[1].cells[1].innerHTML = MyNode.PERSIST_FINISHED || 0;
-                myNodeTable.rows[1].cells[2].innerHTML = MyNode.WAIT_FOR_SYNCING || 0;
-                myNodeTable.rows[1].cells[3].innerHTML = MyNode.SYNC_FINISHED || 0;
-                myNodeTable.rows[1].cells[4].innerHTML = MyNode.SYNC_STARTED || 0;
-                myNodeTable.rows[1].cells[5].innerHTML = MyNode.NO_ID || 0;
-                myNodeTable.rows[1].cells[6].innerHTML = MyNode.INTERNAL_ERROR || 0;
-                myNodeTable.rows[1].cells[7].innerHTML = MyNode.OFFLINE || 0;
-                myNodeTable.rows[1].cells[8].innerHTML = proposalSubmitted;
-
-                //- console.log(MyNode);
+            //- for (let x = 0, n = [...document.querySelectorAll('#MyNodeList > tbody > tr > td')]; x < n.length; x += 9) {
+            for (let x = 0, n = [...document.querySelectorAll('#MyNodeList > tbody > tr > td')]; x < n.length; x += step) {
+              status.push(n[x + 2].innerText);
             }
 
-            function secondsToHms(d) {
-                d = Number(d);
-                var dd = Math.floor(d / 86400);
-                var h = Math.floor(d % 86400 / 3600);
-                var m = Math.floor(d % 3600 / 60);
-                var s = Math.floor(d % 3600 % 60);
+            //- console.log(status);
 
-                var ddDisplay = dd > 0 ? dd.toString().padStart(2, '0') + "d, " : "00d, ";
-                var hDisplay = h > 0 ? h.toString().padStart(2, '0') + "h, " : "00h, ";
-                var mDisplay = m > 0 ? m.toString().padStart(2, '0') + "m, " : "00m, ";
-                var sDisplay = s > 0 ? s.toString().padStart(2, '0') + "s" : "00s";
-                return ddDisplay + hDisplay + mDisplay + sDisplay; 
+            const STATUS_CONST = ['Checking..','PERSIST_FINISHED', 'WAIT_FOR_SYNCING', 'SYNC_FINISHED', 'SYNC_STARTED', 'OFFLINE', 'ERROR', 'INTERNAL_ERROR']
+
+            const MyNode = {};
+            for (let i = 0; i < status.length; i++) {
+              if (STATUS_CONST.includes(status[i])) {
+                MyNode[status[i]] = 1 + (MyNode[status[i]] || 0);
+              } else {
+                MyNode['NO_ID'] = 1 + (MyNode['NO_ID'] || 0);
+              }
             }
 
-            const myNodeListTable = document.getElementById('MyNodeList');
-            const promises = [];
+            myNodeTable.rows[1].cells[1].innerHTML = MyNode.PERSIST_FINISHED || 0;
+            myNodeTable.rows[1].cells[2].innerHTML = MyNode.WAIT_FOR_SYNCING || 0;
+            myNodeTable.rows[1].cells[3].innerHTML = MyNode.SYNC_FINISHED || 0;
+            myNodeTable.rows[1].cells[4].innerHTML = MyNode.SYNC_STARTED || 0;
+            myNodeTable.rows[1].cells[5].innerHTML = MyNode.NO_ID || 0;
+            myNodeTable.rows[1].cells[6].innerHTML = MyNode.INTERNAL_ERROR || 0;
+            myNodeTable.rows[1].cells[7].innerHTML = MyNode.OFFLINE || 0;
+            myNodeTable.rows[1].cells[8].innerHTML = proposalSubmitted;
 
-            for (let r = 1, n = myNodeListTable.rows.length; r < n; r += 1) {
-                const ip = myNodeListTable.rows[r].cells[1].innerHTML;
-                myNodeListTable.rows[r].cells[2].innerHTML = 'Checking..';
+            //- console.log(MyNode);
+          }
 
-                let rq = new Promise((resolve, reject) => {
-                    $.ajax({
+          function secondsToHms(d) {
+            d = Number(d);
+            var dd = Math.floor(d / 86400);
+            var h = Math.floor(d % 86400 / 3600);
+            var m = Math.floor(d % 3600 / 60);
+            var s = Math.floor(d % 3600 % 60);
+
+            var ddDisplay = dd > 0 ? dd.toString().padStart(2, '0') + "d, " : "00d, ";
+            var hDisplay = h > 0 ? h.toString().padStart(2, '0') + "h, " : "00h, ";
+            var mDisplay = m > 0 ? m.toString().padStart(2, '0') + "m, " : "00m, ";
+            var sDisplay = s > 0 ? s.toString().padStart(2, '0') + "s" : "00s";
+            return ddDisplay + hDisplay + mDisplay + sDisplay; 
+          }
+
+          const myNodeListTable = document.getElementById('MyNodeList');
+
+          let promises = [];
+          let promises2 = [];
+
+          const loop_step = 250
+          for (let ro = 1; ro < myNodeListTable.rows.length; ro += loop_step) {
+            let next = ro
+            if (myNodeListTable.rows.length >= next) {
+              promises = [];
+              const lp = new Promise((r) => {
+                console.log(6000 * ro/loop_step)
+
+                setTimeout(() => {
+                  console.log("start next")
+
+                  myNodeTable.rows[1].cells[0].innerHTML = `${ro + loop_step}/${myNodeListTable.rows.length - 1}`
+
+                  for (let r = next, n = myNodeListTable.rows.length; r < n; r += 1) {
+                    if (r > next + loop_step) break;
+
+                    const ip = myNodeListTable.rows[r].cells[1].innerHTML;
+                    myNodeListTable.rows[r].cells[2].innerHTML = 'Checking..';
+
+                    let rq = new Promise((resolve, reject) => {
+                      $.ajax({
                         url: `http://${ip}:30003`,
                         data: JSON.stringify({
-                            jsonrpc: '2.0',
-                            method: 'getnodestate',
-                            params: {},
-                            id: 'nkn-agent', // id is needed !!
+                          jsonrpc: '2.0',
+                          method: 'getnodestate',
+                          params: {},
+                          id: 'nkn-agent', // id is needed !!
                         }),
                         async: true,
                         type: 'POST',
                         dataType: 'json',
+                        timeout: 15000,
                         success(data) {
-                            if (data.result !== undefined) {
-                                myNodeListTable.rows[r].cells[2].innerHTML = data.result.syncState;
-                                myNodeListTable.rows[r].cells[3].innerHTML = data.result.height;
-                                myNodeListTable.rows[r].cells[4].innerHTML = data.result.relayMessageCount;
-                                myNodeListTable.rows[r].cells[5].innerHTML = (data.result.relayMessageCount/(data.result.uptime/3600)).toFixed(0);
-                                myNodeListTable.rows[r].cells[6].innerHTML = data.result.version;
-                                myNodeListTable.rows[r].cells[7].innerHTML = secondsToHms(data.result.uptime);
-                                myNodeListTable.rows[r].cells[8].innerHTML = data.result.proposalSubmitted;
-                                myNodeListTable.rows[r].cells[9].innerHTML = data.result.publicKey;
+                          if (data.result !== undefined) {
+                            myNodeListTable.rows[r].cells[2].innerHTML = data.result.syncState;
+                            myNodeListTable.rows[r].cells[3].innerHTML = data.result.height;
+                            myNodeListTable.rows[r].cells[4].innerHTML = data.result.relayMessageCount;
+                            myNodeListTable.rows[r].cells[5].innerHTML = (data.result.relayMessageCount / (data.result.uptime / 3600)).toFixed(0);
+                            myNodeListTable.rows[r].cells[6].innerHTML = data.result.version;
+                            myNodeListTable.rows[r].cells[7].innerHTML = secondsToHms(data.result.uptime);
+                            myNodeListTable.rows[r].cells[8].innerHTML = data.result.proposalSubmitted;
+                            myNodeListTable.rows[r].cells[9].innerHTML = data.result.publicKey;
 
-                                proposalSubmitted += data.result.proposalSubmitted;
-                                
-                                resolve();
-                            } else if (data.error.walletAddress !== undefined) {
-                                myNodeListTable.rows[r].cells[2].innerHTML = data.error.walletAddress;
-                                
-                                resolve();
-                            } else if (data.error.code === -45024) {
-                                myNodeListTable.rows[r].cells[2].innerHTML = 'INTERNAL_ERROR';
-                                //- console.log(`${ip} - ${data}`);
-                                
-                                resolve();
-                            } else {
-                                myNodeListTable.rows[r].cells[2].innerHTML = 'ERROR';
-                                console.log(`${ip} - ${data}`);
-                                
-                                reject();
-                            }
+                            proposalSubmitted += data.result.proposalSubmitted;
+
+                            resolve();
+                          } else if (data.error.walletAddress !== undefined) {
+                            myNodeListTable.rows[r].cells[2].innerHTML = data.error.walletAddress;
+
+                            resolve();
+                          } else if (data.error.code === -45024) {
+                            myNodeListTable.rows[r].cells[2].innerHTML = 'INTERNAL_ERROR';
+                            //- console.log(`${ip} - ${data}`);
+
+                            resolve();
+                          } else {
+                            myNodeListTable.rows[r].cells[2].innerHTML = 'ERROR';
+                            console.log(`${ip} - ${data}`);
+
+                            reject();
+                          }
                         },
                         error(err) {
-                            myNodeListTable.rows[r].cells[2].innerHTML = 'OFFLINE';
-                            console.log(err);
-                            
-                            reject();
+                          myNodeListTable.rows[r].cells[2].innerHTML = 'OFFLINE';
+                          //- console.log(err);
+
+                          reject();
                         },
-                        timeout: 10000,
+                      });
                     });
-                });
 
-                promises.push(rq);
+                    promises.push(rq);
+                  }
+                  
+                  Promise
+                    .all(promises.map(p => p.catch(() => undefined)))
+                    .then(() => {
+                      statistics();
+                    })
+                    .then(()=>{
+                      r();
+                    })
+                }, 6000 * ro/loop_step);
+              });
+
+              promises2.push(lp);
             }
+          }
 
-            //- let xInterval;
-            //- const xTimeout = setTimeout(() => {
-            //-     xInterval = setInterval(statistics, 5000);
-            //- }, 3000);
-
-            Promise.all(promises.map(p => p.catch(() => undefined)))
-              .then(() => {
-                //- clearInterval(xInterval);
-                //- setTimeout(statistics, 3000);
-                console.log("Done checking");
-                console.log("Automatic reload after (s): " + (60000 + 5 * myNodeListTable.rows.length * 100));
-                statistics();
-                //getNeighbours();
-                setTimeout(() => {
-                  $("#MyNodeList").tablesorter();
-                }, 10000);
-                setTimeout(() => {
-                  //- document.location.reload(true);
-                }, 60000 + 5*myNodeListTable.rows.length*100);
-            });
+          Promise
+            .all(promises2.map(p => p.catch(() => undefined)))
+            .then(()=>{
+              setTimeout(() => {
+                $("#MyNodeList").tablesorter();
+              }, 3000);
+            })
         });
         /* eslint-enable  */
 
@@ -305,14 +325,13 @@ html(lang="en")
         $(document).ready(() => {
           $('#btnAuthKey').click(()=>{
             $.ajax({
-                url: '/server/authkey',
-                type: 'GET',
-                success(authKey) {
-                    if (authKey.length > 0) {
-                        prompt("Your AuthKey for NKN-Agent Client", authKey);
-                    }
-                },
+              url: '/server/authkey',
+              type: 'GET',
+              success(authKey) {
+                if (authKey.length > 0) {
+                  prompt("Your AuthKey for NKN-Agent Client", authKey);
+                }
+              },
             });
           });
         });
-      

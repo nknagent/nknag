@@ -50,6 +50,8 @@ html(lang="en")
             th INTERNAL_ERROR
             th ERROR / OFFLINE
             th PROPOSAL_SUBMITTED
+            th SSH OPEN
+            th SSH CLOSED
             
         tbody
             tr(align='center')
@@ -62,11 +64,13 @@ html(lang="en")
               td=0
               td=0
               td=0
+              td=0
+              td=0
       br
       div(style='width:100%', align='center')
         a Auto F5: OFF
         a  . 
-        a(href="/", style='color: #000000; background-color: #a0a9bc; text-decoration: none') HOME
+        a(href="/nbstat", style='color: #000000; background-color: #a0a9bc; text-decoration: none') Neighbours
         a  . 
       br
       table#MyNodeList(style='width:90% !important; margin: auto !important; text-align: center; border-spacing: 0px !important;', border='1', align='center')
@@ -82,24 +86,14 @@ html(lang="en")
             th Uptime
             //- th Last Online
             th Mined
-            th Ally
-            th Avg.
-            th Min.
-            th Max
-            th <100ms
-            th 100-1000ms
-            th >1000ms
+            th Pubkey
+            th SSH
 
         tbody
           each server, index in servers
             tr(align='center')
               td=index+1
               td=server
-              td=''
-              td=''
-              td=''
-              td=''
-              td=''
               td=''
               td=''
               td=''
@@ -209,6 +203,7 @@ html(lang="en")
                 myNodeTable.rows[1].cells[6].innerHTML = MyNode.INTERNAL_ERROR || 0;
                 myNodeTable.rows[1].cells[7].innerHTML = MyNode.OFFLINE || 0;
                 myNodeTable.rows[1].cells[8].innerHTML = proposalSubmitted;
+                //- myNodeTable.rows[1].cells[9].innerHTML = proposalSubmitted;
 
                 //- console.log(MyNode);
             }
@@ -227,168 +222,123 @@ html(lang="en")
                 return ddDisplay + hDisplay + mDisplay + sDisplay; 
             }
 
-            function getNeighbours() {
-                for (let r = 1, n = myNodeListTable.rows.length; r < n; r += 1) {
-                  const ip = myNodeListTable.rows[r].cells[1].innerHTML;
-                  const stt = ['Checking..', 'OFFLINE', 'INTERNAL_ERROR'];
-                  if (stt.includes(myNodeListTable.rows[r].cells[2].innerHTML)) {}
-                  else {
-                    myNodeListTable.rows[r].cells[9].innerHTML = "calc..";
+            const myNodeListTable = document.getElementById('MyNodeList');
+            const promises = [];
+
+            for (let r = 1, n = myNodeListTable.rows.length; r < n; r += 1) {
+                const ip = myNodeListTable.rows[r].cells[1].innerHTML;
+                myNodeListTable.rows[r].cells[2].innerHTML = 'Checking..';
+
+                let rq = new Promise((resolve, reject) => {
                     $.ajax({
                         url: `http://${ip}:30003`,
                         data: JSON.stringify({
                             jsonrpc: '2.0',
-                            method: 'getneighbor',
-                            params: {},
-                            id: 'nkn-agent', // id is needed !!
-                        }),
-                        //- async: true,
-                        type: 'POST',
-                        dataType: 'json',
-                        success(data) {
-                            if (data.result !== undefined && data.result.length > 0) {
-                                //- console.log(`${data.result.length}`);
-                                const myArray = data.result;
-                                myArray.sort(function (a, b) {
-                                  return a.roundTripTime - b.roundTripTime
-                                });
-
-                                var min = myArray[0].roundTripTime,
-                                  max = myArray[myArray.length - 1].roundTripTime,
-                                  avg = (myArray.reduce((a, b) => a + (b['roundTripTime'] || 0), 0)) / myArray.length;
-
-                                myNodeListTable.rows[r].cells[9].innerHTML = data.result.length;
-                                myNodeListTable.rows[r].cells[10].innerHTML = avg.toFixed(0);
-                                myNodeListTable.rows[r].cells[11].innerHTML = min;
-                                myNodeListTable.rows[r].cells[12].innerHTML = max;
-                                
-                                var ms100 = myArray.filter(a => a.roundTripTime < 100).length,
-                                  ms1000 = myArray.filter(a => a.roundTripTime > 100 && a.roundTripTime < 1000).length,
-                                  ms9999 = myArray.filter(a => a.roundTripTime > 1000).length;
-
-                                myNodeListTable.rows[r].cells[13].innerHTML = ms100;
-                                myNodeListTable.rows[r].cells[14].innerHTML = ms1000;
-                                myNodeListTable.rows[r].cells[15].innerHTML = ms9999;
-                            } else {
-                                myNodeListTable.rows[r].cells[9].innerHTML = 'N/A';
-                                console.log(`${ip} - ${data}`);
-                                
-                                //- reject();
-                            }
-                        },
-                        error(err) {
-                            myNodeListTable.rows[r].cells[9].innerHTML = 'N/A';
-                            console.log(err);
-                            
-                            //- reject();
-                        },
-                        //- timeout: 10000,
-                    });
-                  }
-                }
-            }
-
-            const myNodeListTable = document.getElementById('MyNodeList');
-
-            let promises = [];
-            let promises2 = [];
-
-            const loop_step = 250
-            for (let ro = 1; ro < myNodeListTable.rows.length; ro += loop_step) {
-              let next = ro
-              if (myNodeListTable.rows.length >= next) {
-                promises = [];
-                const lp = new Promise((r) => {
-                  console.log(6000 * ro/loop_step)
-
-                  setTimeout(() => {
-                    console.log("start next")
-
-                    for (let r = next, n = myNodeListTable.rows.length; r < n; r += 1) {
-                      if (r > next + loop_step) break;
-
-                      const ip = myNodeListTable.rows[r].cells[1].innerHTML;
-                      myNodeListTable.rows[r].cells[2].innerHTML = 'Checking..';
-
-                      let rq = new Promise((resolve, reject) => {
-                        $.ajax({
-                          url: `http://${ip}:30003`,
-                          data: JSON.stringify({
-                            jsonrpc: '2.0',
                             method: 'getnodestate',
                             params: {},
                             id: 'nkn-agent', // id is needed !!
-                          }),
-                          async: true,
-                          type: 'POST',
-                          dataType: 'json',
-                          timeout: 15000,
-                          success(data) {
+                        }),
+                        async: true,
+                        type: 'POST',
+                        dataType: 'json',
+                        crossDomain : true,
+                        success(data) {
                             if (data.result !== undefined) {
-                              myNodeListTable.rows[r].cells[2].innerHTML = data.result.syncState;
-                              myNodeListTable.rows[r].cells[3].innerHTML = data.result.height;
-                              myNodeListTable.rows[r].cells[4].innerHTML = data.result.relayMessageCount;
-                              myNodeListTable.rows[r].cells[5].innerHTML = (data.result.relayMessageCount / (data.result.uptime / 3600)).toFixed(0);
-                              myNodeListTable.rows[r].cells[6].innerHTML = data.result.version;
-                              myNodeListTable.rows[r].cells[7].innerHTML = secondsToHms(data.result.uptime);
-                              myNodeListTable.rows[r].cells[8].innerHTML = data.result.proposalSubmitted;
-                              myNodeListTable.rows[r].cells[9].innerHTML = data.result.publicKey;
+                                myNodeListTable.rows[r].cells[2].innerHTML = data.result.syncState;
+                                myNodeListTable.rows[r].cells[3].innerHTML = data.result.height;
+                                myNodeListTable.rows[r].cells[4].innerHTML = data.result.relayMessageCount;
+                                myNodeListTable.rows[r].cells[5].innerHTML = (data.result.relayMessageCount/(data.result.uptime/3600)).toFixed(0);
+                                myNodeListTable.rows[r].cells[6].innerHTML = data.result.version;
+                                myNodeListTable.rows[r].cells[7].innerHTML = secondsToHms(data.result.uptime);
+                                myNodeListTable.rows[r].cells[8].innerHTML = data.result.proposalSubmitted;
+                                myNodeListTable.rows[r].cells[9].innerHTML = data.result.publicKey;
 
-                              proposalSubmitted += data.result.proposalSubmitted;
-
-                              resolve();
+                                proposalSubmitted += data.result.proposalSubmitted;
+                                
+                                resolve();
                             } else if (data.error.walletAddress !== undefined) {
-                              myNodeListTable.rows[r].cells[2].innerHTML = data.error.walletAddress;
-
-                              resolve();
+                                myNodeListTable.rows[r].cells[2].innerHTML = data.error.walletAddress;
+                                
+                                resolve();
                             } else if (data.error.code === -45024) {
-                              myNodeListTable.rows[r].cells[2].innerHTML = 'INTERNAL_ERROR';
-                              //- console.log(`${ip} - ${data}`);
-
-                              resolve();
+                                myNodeListTable.rows[r].cells[2].innerHTML = 'INTERNAL_ERROR';
+                                //- console.log(`${ip} - ${data}`);
+                                
+                                resolve();
                             } else {
-                              myNodeListTable.rows[r].cells[2].innerHTML = 'ERROR';
-                              console.log(`${ip} - ${data}`);
-
-                              reject();
+                                myNodeListTable.rows[r].cells[2].innerHTML = 'ERROR';
+                                console.log(`${ip} - ${data}`);
+                                
+                                reject();
                             }
-                          },
-                          error(err) {
+                        },
+                        error(err) {
                             myNodeListTable.rows[r].cells[2].innerHTML = 'OFFLINE';
-                            //- console.log(err);
-
+                            console.log(err);
+                            
                             reject();
-                          },
-                        });
-                      });
-
-                      promises.push(rq);
-                    }
-                    
-                    Promise
-                      .all(promises.map(p => p.catch(() => undefined)))
-                      .then(() => {
-                        getNeighbours();
-                        statistics();
-                      })
-                      .then(()=>{
-                        r();
-                      })
-                  }, 6000 * ro/loop_step);
+                        },
+                        timeout: 15000,
+                    });
                 });
 
-                promises2.push(lp);
-              }
+                promises.push(rq);
+
+                let rq2 = new Promise((resolve, reject) => {
+                  $.ajax({
+                    url: `http://${ip}:22`,
+                    data: JSON.stringify({
+                      jsonrpc: '2.0',
+                      method: 'getnodestate',
+                      params: {},
+                      id: 'nkn-agent', // id is needed !!
+                    }),
+                    async :true,
+                    type: 'POST',
+                    dataType: 'json',
+                    crossDomain: true,
+                    success(data) {
+                      if (data.includes("open")) {
+                        myNodeListTable.rows[r].cells[10].innerHTML = "OPEN";
+                        resolve();
+                      } else {
+                        myNodeListTable.rows[r].cells[10].innerHTML = 'CLOSED';
+                        reject();
+                      }
+                    },
+                    error(err) {
+                      myNodeListTable.rows[r].cells[10].innerHTML = err;
+                      console.log(err);
+
+                      reject();
+                    },
+                    timeout: 30000,
+                  });
+                });
+
+                promises.push(rq2);
             }
 
-            Promise
-              .all(promises2.map(p => p.catch(() => undefined)))
-              .then(()=>{
+            //- let xInterval;
+            //- const xTimeout = setTimeout(() => {
+            //-     xInterval = setInterval(statistics, 5000);
+            //- }, 3000);
+
+            Promise.all(promises.map(p => p.catch(() => undefined)))
+              .then(() => {
+                //- clearInterval(xInterval);
+                //- setTimeout(statistics, 3000);
+                console.log("Done checking");
+                console.log("Automatic reload after (s): " + (60000 + 5 * myNodeListTable.rows.length * 100));
+                statistics();
+                //getNeighbours();
                 setTimeout(() => {
                   $("#MyNodeList").tablesorter();
-                }, 3000);
-              })
-
+                }, 10000);
+                setTimeout(() => {
+                  //- document.location.reload(true);
+                }, 60000 + 5*myNodeListTable.rows.length*100);
+            });
         });
         /* eslint-enable  */
 

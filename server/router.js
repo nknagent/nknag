@@ -16,10 +16,14 @@ router
         await ctx.render('index', { servers: global.DB.serverList });
         next();
     })
-    .get('/nbstat', async (ctx, next) => {
-        await ctx.render('index_nb_stat', { servers: global.DB.serverList });
-        next();
-    })
+    // .get('/port', async (ctx, next) => {
+    //     await ctx.render('index_port', { servers: global.DB.serverList });
+    //     next();
+    // })
+    // .get('/nbstat', async (ctx, next) => {
+    //     await ctx.render('index_nb_stat', { servers: global.DB.serverList });
+    //     next();
+    // })
     .get('/server/add', async (ctx, next) => {
         await ctx.render('server/add', { result: '' });
         next();
