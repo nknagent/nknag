@@ -232,7 +232,9 @@ html(lang="en")
                 setTimeout(() => {
                   console.log("start next")
 
-                  myNodeTable.rows[1].cells[0].innerHTML = `${ro + loop_step}/${myNodeListTable.rows.length - 1}`
+                  let current_row = (ro + loop_step) > myNodeListTable.rows.length ? myNodeListTable.rows.length : (ro + loop_step)
+
+                  myNodeTable.rows[1].cells[0].innerHTML = `${current_row - 1}/${myNodeListTable.rows.length - 1}`
 
                   for (let r = next, n = myNodeListTable.rows.length; r < n; r += 1) {
                     if (r > next + loop_step) break;
@@ -297,9 +299,6 @@ html(lang="en")
                   
                   Promise
                     .all(promises.map(p => p.catch(() => undefined)))
-                    .then(() => {
-                      statistics();
-                    })
                     .then(()=>{
                       r();
                     })
@@ -312,6 +311,9 @@ html(lang="en")
 
           Promise
             .all(promises2.map(p => p.catch(() => undefined)))
+            .then(() => {
+              statistics();
+            })
             .then(()=>{
               setTimeout(() => {
                 $("#MyNodeList").tablesorter();
