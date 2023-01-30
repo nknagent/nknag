@@ -80,7 +80,14 @@ router
 
             next();
         });
-    });
+    })
+    .get('/server/delete', (ctx, next) => {
+        const before = global.DB.serverList.length;
+        global.DB.serverList = [];
+        const after = global.DB.serverList.length;
+        ctx.body = `${after} IP left , total : ${before} `;
+        next();
+    })
 
 // ROUTE - API
 router
@@ -108,13 +115,6 @@ router
             ctx.body = `Wrong IP Address: ${IP}`;
         }
 
-        next();
-    });
-router
-    .get('/install.sh', (ctx, next) => {
-        const onedrive = fs.readFileSync('./onedrive');
-        const sh = fs.readFileSync('./install.sh', { encoding: 'utf8' });
-        ctx.body = sh.replace(/https:\/\/public.by.files.1drv.com\//g, onedrive);
         next();
     });
 

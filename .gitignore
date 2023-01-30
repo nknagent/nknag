@@ -3,6 +3,8 @@
 *\db.json
 client/
 default.json
+*.txt
+
 
 # Logs
 logs

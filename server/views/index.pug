@@ -257,10 +257,12 @@ html(lang="en")
                         timeout: 15000,
                         success(data) {
                           if (data.result !== undefined) {
+                            const rlh = data.result.uptime >=  3600 ? (data.result.relayMessageCount / (data.result.uptime / 3600)).toFixed(0) : data.result.relayMessageCount;
+                            
                             myNodeListTable.rows[r].cells[2].innerHTML = data.result.syncState;
                             myNodeListTable.rows[r].cells[3].innerHTML = data.result.height;
                             myNodeListTable.rows[r].cells[4].innerHTML = data.result.relayMessageCount;
-                            myNodeListTable.rows[r].cells[5].innerHTML = (data.result.relayMessageCount / (data.result.uptime / 3600)).toFixed(0);
+                            myNodeListTable.rows[r].cells[5].innerHTML = rlh;
                             myNodeListTable.rows[r].cells[6].innerHTML = data.result.version;
                             myNodeListTable.rows[r].cells[7].innerHTML = secondsToHms(data.result.uptime);
                             myNodeListTable.rows[r].cells[8].innerHTML = data.result.proposalSubmitted;

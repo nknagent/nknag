@@ -21,8 +21,8 @@ const pug = new Pug({
 app.use(bodyParser());
 app.use(logger());
 
-app.use(auth.h401);
-app.use(auth.mount);
+//app.use(auth.h401);
+//app.use(auth.mount);
 
 app.use(router.routes());
 app.use(router.allowedMethods());
